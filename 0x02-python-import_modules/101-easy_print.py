@@ -1,2 +1,2 @@
 #!/usr/bin/python3
-exec("write('#pythoniscool\\n')")
+if __name__ == "__main__": exec("print('#pythoniscool')")
