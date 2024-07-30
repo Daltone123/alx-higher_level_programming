@@ -12,30 +12,34 @@ const apiUrl = process.argv[2];
 request(apiUrl, (error, response, body) => {
   if (error) {
     console.error('Error making the request:', error);
-  } else if (response.statusCode !== 200) {
+    return;
+  }
+
+  if (response.statusCode !== 200) {
     console.error(`Error: Received status code ${response.statusCode}`);
-  } else {
-    try {
-      const todos = JSON.parse(body);
-      const userTasks = {};
+    return;
+  }
 
-      todos.forEach(todo => {
-        if (todo.completed) {
-          if (userTasks[todo.userId]) {
-            userTasks[todo.userId]++;
-          } else {
-            userTasks[todo.userId] = 1;
-          }
-        }
-      });
+  try {
+    const todos = JSON.parse(body);
+    const userTasks = {};
 
-      for (const userId in userTasks) {
-        if (Object.prototype.hasOwnProperty.call(userTasks, userId)) {
-          console.log(`User ${userId} has completed ${userTasks[userId]} tasks`);
+    todos.forEach(todo => {
+      if (todo.completed) {
+        if (userTasks[todo.userId]) {
+          userTasks[todo.userId]++;
+        } else {
+          userTasks[todo.userId] = 1;
         }
       }
-    } catch (parseError) {
-      console.error('Error parsing the response body:', parseError);
+    });
+
+    for (const userId in userTasks) {
+      if (Object.prototype.hasOwnProperty.call(userTasks, userId)) {
+        console.log(`User ${userId} has completed ${userTasks[userId]} tasks`);
+      }
     }
+  } catch (parseError) {
+    console.error('Error parsing the response body:', parseError);
   }
 });
